@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solve the Blank I.S Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Marker Felt', cursive, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffcc00, #ff6699);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        .menu {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50px 0 50px 0;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 5px solid #3366ff;
+            position: relative;
+            overflow: hidden;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .menu::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 5px dashed #ffcc00;
+            border-radius: 25px;
+            z-index: -1;
+            animation: rotate 20s linear infinite;
+        }
+
+        .title {
+            font-size: 2.8rem;
+            color: #3366ff;
+            text-shadow: 4px 4px 0 #ffcc00, 
+                        7px 7px 0 rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+            animation: bounce 2s infinite alternate;
+            letter-spacing: 2px;
+            line-height: 1.2;
+        }
+
+        .menu-item {
+            display: block;
+            width: 220px;
+            margin: 1.2rem auto;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.5rem;
+            background-color: #3366ff;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 0 #1a4dcc;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        #play-btn {
+            background-color: #ff6699;
+            box-shadow: 0 5px 0 #e0558a;
+        }
+
+        #play-btn:hover {
+            animation: wobble 0.5s;
+            background-color: #ff7aa8;
+        }
+
+        #about-btn {
+            background-color: #ffcc00;
+            box-shadow: 0 5px 0 #e6b800;
+            color: #333;
+        }
+
+        #about-btn:hover {
+            animation: wobble 0.5s;
+            background-color: #ffd633;
+        }
+
+        #credits-btn {
+            background-color: #33cc66;
+            box-shadow: 0 5px 0 #29a352;
+        }
+
+        #credits-btn:hover {
+            animation: wobble 0.5s;
+            background-color: #40d673;
+        }
+
+        .menu-item:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #1a4dcc;
+        }
+
+        .menu-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .menu-item:hover::after {
+            left: 100%;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: float 15s infinite ease-in-out;
+            z-index: 1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 5px solid #3366ff;
+            position: relative;
+            animation: pop-in 0.3s ease-out;
+        }
+
+        .modal-title {
+            color: #3366ff;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 0 #ffcc00;
+        }
+
+        .modal-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .close-btn {
+            background-color: #ff6699;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 0 #e0558a;
+        }
+
+        .close-btn:hover {
+            background-color: #ff7aa8;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 0 #e0558a;
+        }
+
+        .close-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 0 #e0558a;
+        }
+
+        .credits-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin: 1rem 0;
+            background-color: #f0f8ff;
+            border-radius: 10px;
+            border-left: 5px solid #3366ff;
+        }
+
+        .credits-name {
+            font-weight: bold;
+            color: #3366ff;
+            font-size: 1.3rem;
+        }
+
+        .credits-role {
+            color: #ff6699;
+            font-size: 1.1rem;
+        }
+
+        .language-selection, .confirmation, .game-screen, .result-screen {
+            display: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 5px solid #3366ff;
+            position: relative;
+            overflow: hidden;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .language-btn {
+            display: block;
+            width: 220px;
+            margin: 1rem auto;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.5rem;
+            background-color: #3366ff;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 0 #1a4dcc;
+        }
+
+        .language-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 0 #1a4dcc;
+        }
+
+        .language-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 0 #1a4dcc;
+        }
+
+        .confirmation-btn {
+            display: inline-block;
+            width: 120px;
+            margin: 1rem 0.5rem;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.2rem;
+            background-color: #33cc66;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 0 #29a352;
+        }
+
+        .confirmation-btn.no {
+            background-color: #ff6699;
+            box-shadow: 0 5px 0 #e0558a;
+        }
+
+        .confirmation-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 0 #29a352;
+        }
+
+        .confirmation-btn.no:hover {
+            box-shadow: 0 10px 0 #e0558a;
+        }
+
+        .confirmation-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 0 #29a352;
+        }
+
+        .confirmation-btn.no:active {
+            box-shadow: 0 3px 0 #e0558a;
+        }
+
+        .problem-container {
+            margin: 1.5rem 0;
+            font-size: 1.3rem;
+            line-height: 1.6;
+        }
+
+        .blank {
+            display: inline-block;
+            width: 120px;
+            border-bottom: 2px solid #3366ff;
+            margin: 0 5px;
+            text-align: center;
+        }
+
+        .blank input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-size: 1.2rem;
+            outline: none;
+            color: #3366ff;
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            background-color: #ffcc00;
+            color: #333;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 0 #e6b800;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            background-color: #ffd633;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 0 #e6b800;
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 0 #e6b800;
+        }
+
+        .progress {
+            margin: 1rem 0;
+            font-size: 1.2rem;
+            color: #3366ff;
+            font-weight: bold;
+        }
+
+        .result-score {
+            font-size: 3rem;
+            color: #3366ff;
+            margin: 1rem 0;
+            text-shadow: 2px 2px 0 #ffcc00;
+        }
+
+        .stars {
+            font-size: 3rem;
+            margin: 1rem 0;
+            color: #ffcc00;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        }
+
+        .result-btn {
+            display: inline-block;
+            width: 150px;
+            margin: 1rem 0.5rem;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.2rem;
+            background-color: #3366ff;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 0 #1a4dcc;
+        }
+
+        .result-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 0 #1a4dcc;
+        }
+
+        .result-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 0 #1a4dcc;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(10px) rotate(240deg); }
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-15px); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        @keyframes pop-in {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .character {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: #ffcc00;
+            border-radius: 50% 50% 40% 40%;
+            z-index: 5;
+            bottom: 50px;
+            left: 10%;
+            animation: wiggle 4s infinite alternate;
+        }
+
+        .character::before, .character::after {
+            content: '';
+            position: absolute;
+            background-color: #3366ff;
+            border-radius: 50%;
+        }
+
+        .character::before {
+            width: 25px;
+            height: 25px;
+            top: 35px;
+            left: 25px;
+        }
+
+        .character::after {
+            width: 25px;
+            height: 25px;
+            top: 35px;
+            right: 25px;
+        }
+
+        .character .mouth {
+            position: absolute;
+            width: 30px;
+            height: 15px;
+            background-color: #ff6699;
+            border-radius: 0 0 15px 15px;
+            bottom: 30px;
+            left: 35px;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: #3366ff;
+            font-size: 1rem;
+        }
+
+        .pencil {
+            position: absolute;
+            width: 120px;
+            height: 20px;
+            background: linear-gradient(to right, #ffcc00, #ff9933);
+            border-radius: 10px;
+            top: 20%;
+            right: 10%;
+            transform: rotate(30deg);
+            z-index: 5;
+        }
+
+        .pencil::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff6699;
+            border-radius: 50%;
+            right: -10px;
+            top: 0;
+        }
+
+        .notebook {
+            position: absolute;
+            width: 100px;
+            height: 130px;
+            background-color: white;
+            border: 3px solid #3366ff;
+            border-radius: 5px;
+            top: 15%;
+            left: 8%;
+            transform: rotate(-10deg);
+            z-index: 5;
+        }
+
+        .notebook::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 5px;
+            background-color: #ffcc00;
+            top: 20px;
+            left: 0;
+        }
+
+        .notebook::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 5px;
+            background-color: #ffcc00;
+            top: 40px;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="menu" id="main-menu">
+            <h1 class="title">Solve the Blank<br>I.S Edition</h1>
+            <button class="menu-item" id="play-btn">Play</button>
+            <button class="menu-item" id="about-btn">About</button>
+            <button class="menu-item" id="credits-btn">Credits</button>
+        </div>
+        
+        <div class="language-selection" id="language-selection">
+            <h2 class="modal-title">Choose a Language</h2>
+            <button class="language-btn" data-lang="cpp">C++</button>
+            <button class="language-btn" data-lang="php">PHP</button>
+            <button class="language-btn" data-lang="html">HTML</button>
+            <button class="language-btn" data-lang="python">PYTHON</button>
+        </div>
+        
+        <div class="confirmation" id="confirmation">
+            <h2 class="modal-title">Are you ready to answer?</h2>
+            <button class="confirmation-btn yes" id="yes-btn">Yes</button>
+            <button class="confirmation-btn no" id="no-btn">No</button>
+        </div>
+        
+        <div class="game-screen" id="game-screen">
+            <h2 class="modal-title" id="game-title">Coding Problems</h2>
+            <div class="progress" id="progress">Question 1 of 10</div>
+            <div class="problem-container" id="problem-container"></div>
+            <button class="submit-btn" id="submit-btn">Submit Answer</button>
+        </div>
+        
+        <div class="result-screen" id="result-screen">
+            <h2 class="modal-title">Game Results</h2>
+            <div class="result-score" id="result-score">0/10</div>
+            <div class="stars" id="stars">★★★</div>
+            <button class="result-btn" id="retry-btn">Retry</button>
+            <button class="result-btn" id="main-menu-btn">Main Menu</button>
+        </div>
+    </div>
+    
+    <!-- About Modal -->
+    <div class="modal" id="about-modal">
+        <div class="modal-content">
+            <h2 class="modal-title">About Solve the Blank</h2>
+            <div class="modal-text">
+                <p>Welcome to <strong>Solve the Blank I.S Edition</strong> - the most exciting word puzzle game!</p>
+                <p>Test your vocabulary and problem-solving skills as you fill in the missing words in various challenging puzzles.</p>
+                <p>With multiple difficulty levels and hundreds of puzzles, this game will keep you entertained for hours!</p>
+                <p>Perfect for players of all ages who love word games and brain teasers.</p>
+            </div>
+            <button class="close-btn" id="close-about">Close</button>
+        </div>
+    </div>
+    
+    <!-- Credits Modal -->
+    <div class="modal" id="credits-modal">
+        <div class="modal-content">
+            <h2 class="modal-title">Credits</h2>
+            <div class="modal-text">
+                <p>Thank you to everyone who contributed to the development of Solve the Blank I.S Edition!</p>
+                <div class="credits-item">
+                    <span class="credits-name">Gwapo si Haven</span>
+                    <span class="credits-role">Game Coder</span>
+                </div>
+            </div>
+            <button class="close-btn" id="close-credits">Close</button>
+        </div>
+    </div>
+    
+    <div class="character">
+        <div class="mouth"></div>
+    </div>
+    
+    <div class="pencil"></div>
+    <div class="notebook"></div>
+
+    <script>
+        // Game data
+        const gameData = {
+            cpp: [
+                {
+                    question: "In C++, the _______ keyword is used to include input/output functionality.",
+                    answer: "include",
+                    code: "#include <iostream>"
+                },
+                {
+                    question: "To output text in C++, we use the _______ object.",
+                    answer: "cout",
+                    code: "std::cout << \"Hello World\";"
+                },
+                {
+                    question: "The _______ function is the entry point of a C++ program.",
+                    answer: "main",
+                    code: "int main() { return 0; }"
+                },
+                {
+                    question: "In C++, variables are declared with a specific _______ like int or double.",
+                    answer: "type",
+                    code: "int number = 5;"
+                },
+                {
+                    question: "The _______ statement is used to make decisions in C++.",
+                    answer: "if",
+                    code: "if (x > 5) { /* code */ }"
+                },
+                {
+                    question: "A _______ loop executes a block of code repeatedly while a condition is true.",
+                    answer: "while",
+                    code: "while (condition) { /* code */ }"
+                },
+                {
+                    question: "In C++, _______ are used to store multiple values of the same type.",
+                    answer: "arrays",
+                    code: "int numbers[5] = {1, 2, 3, 4, 5};"
+                },
+                {
+                    question: "The _______ keyword is used to define a function in C++.",
+                    answer: "void",
+                    code: "void myFunction() { /* code */ }"
+                },
+                {
+                    question: "In C++, _______ are used to perform operations on variables.",
+                    answer: "operators",
+                    code: "int result = a + b;"
+                },
+                {
+                    question: "The _______ statement is used to exit a loop prematurely.",
+                    answer: "break",
+                    code: "while (true) { if (condition) break; }"
+                }
+            ],
+            php: [
+                {
+                    question: "In PHP, variables start with a _______ symbol.",
+                    answer: "$",
+                    code: "$name = 'John';"
+                },
+                {
+                    question: "To output text in PHP, we use the _______ function.",
+                    answer: "echo",
+                    code: "echo \"Hello World\";"
+                },
+                {
+                    question: "PHP stands for PHP: _______ Preprocessor.",
+                    answer: "Hypertext",
+                    code: "// PHP: Hypertext Preprocessor"
+                },
+                {
+                    question: "In PHP, arrays can be created using the _______ function.",
+                    answer: "array",
+                    code: "$colors = array(\"red\", \"green\", \"blue\");"
+                },
+                {
+                    question: "The _______ statement is used to include one PHP file into another.",
+                    answer: "include",
+                    code: "include 'header.php';"
+                },
+                {
+                    question: "In PHP, the _______ function returns the number of elements in an array.",
+                    answer: "count",
+                    code: "$length = count($array);"
+                },
+                {
+                    question: "PHP scripts are executed on the _______ before being sent to the browser.",
+                    answer: "server",
+                    code: "// Server-side scripting"
+                },
+                {
+                    question: "In PHP, the _______ operator concatenates two strings.",
+                    answer: ".",
+                    code: "$fullName = $firstName . $lastName;"
+                },
+                {
+                    question: "The _______ function is used to get the current date and time in PHP.",
+                    answer: "date",
+                    code: "$today = date('Y-m-d');"
+                },
+                {
+                    question: "In PHP, the _______ statement is used to handle exceptions.",
+                    answer: "try",
+                    code: "try { /* code */ } catch (Exception $e) { /* handle error */ }"
+                }
+            ],
+            html: [
+                {
+                    question: "HTML stands for HyperText _______ Language.",
+                    answer: "Markup",
+                    code: "<!-- HyperText Markup Language -->"
+                },
+                {
+                    question: "The _______ tag is used to create a hyperlink in HTML.",
+                    answer: "a",
+                    code: "<a href=\"page.html\">Link</a>"
+                },
+                {
+                    question: "In HTML, the _______ tag is used to define an image.",
+                    answer: "img",
+                    code: "<img src=\"image.jpg\" alt=\"Description\">"
+                },
+                {
+                    question: "The _______ tag is used to create an unordered list in HTML.",
+                    answer: "ul",
+                    code: "<ul><li>Item 1</li></ul>"
+                },
+                {
+                    question: "In HTML, the _______ attribute specifies where to open a linked document.",
+                    answer: "target",
+                    code: "<a href=\"page.html\" target=\"_blank\">Link</a>"
+                },
+                {
+                    question: "The _______ tag is used to define the most important heading in HTML.",
+                    answer: "h1",
+                    code: "<h1>Main Heading</h1>"
+                },
+                {
+                    question: "In HTML, the _______ tag is used to create a table row.",
+                    answer: "tr",
+                    code: "<tr><td>Cell 1</td></tr>"
+                },
+                {
+                    question: "The _______ tag is used to define a paragraph in HTML.",
+                    answer: "p",
+                    code: "<p>This is a paragraph.</p>"
+                },
+                {
+                    question: "In HTML, the _______ attribute is used to provide alternative text for images.",
+                    answer: "alt",
+                    code: "<img src=\"image.jpg\" alt=\"Description\">"
+                },
+                {
+                    question: "The _______ tag is used to create a line break in HTML.",
+                    answer: "br",
+                    code: "Line 1<br>Line 2"
+                }
+            ],
+            python: [
+                {
+                    question: "In Python, the _______ function is used to output text to the console.",
+                    answer: "print",
+                    code: "print(\"Hello World\")"
+                },
+                {
+                    question: "Python uses _______ to define blocks of code instead of curly braces.",
+                    answer: "indentation",
+                    code: "if x > 5:\n    print(\"x is greater than 5\")"
+                },
+                {
+                    question: "In Python, lists are created using _______ brackets.",
+                    answer: "square",
+                    code: "my_list = [1, 2, 3]"
+                },
+                {
+                    question: "The _______ statement is used to import modules in Python.",
+                    answer: "import",
+                    code: "import math"
+                },
+                {
+                    question: "In Python, the _______ function returns the length of an object.",
+                    answer: "len",
+                    code: "length = len(my_list)"
+                },
+                {
+                    question: "Python uses the _______ keyword to define a function.",
+                    answer: "def",
+                    code: "def my_function():\n    return \"Hello\""
+                },
+                {
+                    question: "In Python, _______ are used to store key-value pairs.",
+                    answer: "dictionaries",
+                    code: "my_dict = {\"name\": \"John\", \"age\": 30}"
+                },
+                {
+                    question: "The _______ method is used to add an element to the end of a list in Python.",
+                    answer: "append",
+                    code: "my_list.append(4)"
+                },
+                {
+                    question: "In Python, the _______ loop iterates over a sequence (list, tuple, string, etc.).",
+                    answer: "for",
+                    code: "for item in my_list:\n    print(item)"
+                },
+                {
+                    question: "Python uses the _______ operator for exponentiation.",
+                    answer: "**",
+                    code: "result = 2 ** 3  # 8"
+                }
+            ]
+        };
+
+        // Game state
+        let currentLanguage = '';
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        // DOM elements
+        const mainMenu = document.getElementById('main-menu');
+        const languageSelection = document.getElementById('language-selection');
+        const confirmation = document.getElementById('confirmation');
+        const gameScreen = document.getElementById('game-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const problemContainer = document.getElementById('problem-container');
+        const progress = document.getElementById('progress');
+        const resultScore = document.getElementById('result-score');
+        const stars = document.getElementById('stars');
+        const gameTitle = document.getElementById('game-title');
+
+        // Create floating bubbles
+        function createBubbles() {
+            const colors = ['#3366ff', '#ffcc00', '#ff6699'];
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                const size = Math.random() * 60 + 20;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                bubble.style.backgroundColor = color;
+                
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.top = `${Math.random() * 100}%`;
+                
+                bubble.style.animationDelay = `${Math.random() * 10}s`;
+                bubble.style.animationDuration = `${15 + Math.random() * 10}s`;
+                
+                document.body.appendChild(bubble);
+            }
+        }
+
+        // Show screen function
+        function showScreen(screen) {
+            mainMenu.style.display = 'none';
+            languageSelection.style.display = 'none';
+            confirmation.style.display = 'none';
+            gameScreen.style.display = 'none';
+            resultScreen.style.display = 'none';
+            
+            screen.style.display = 'block';
+        }
+
+        // Initialize game
+        function initGame(language) {
+            currentLanguage = language;
+            currentQuestionIndex = 0;
+            score = 0;
+            questions = [...gameData[language]];
+            showNextQuestion();
+        }
+
+        // Show next question
+        function showNextQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+            
+            const question = questions[currentQuestionIndex];
+            progress.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            gameTitle.textContent = `${currentLanguage.toUpperCase()} Problems`;
+            
+            // Create question HTML
+            problemContainer.innerHTML = `
+                <p>${question.question}</p>
+                <div style="margin: 1rem 0; background: #f0f8ff; padding: 1rem; border-radius: 10px; font-family: monospace;">
+                    ${question.code}
+                </div>
+                <p>Fill in the blank:</p>
+                <div class="blank">
+                    <input type="text" id="answer-input" autocomplete="off">
+                </div>
+            `;
+            
+            // Focus on input
+            document.getElementById('answer-input').focus();
+            
+            showScreen(gameScreen);
+        }
+
+        // Check answer
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answer-input').value.trim().toLowerCase();
+            const correctAnswer = questions[currentQuestionIndex].answer.toLowerCase();
+            
+            if (userAnswer === correctAnswer) {
+                score++;
+            }
+            
+            currentQuestionIndex++;
+            showNextQuestion();
+        }
+
+        // Show results
+        function showResults() {
+            resultScore.textContent = `${score}/${questions.length}`;
+            
+            // Calculate stars
+            const percentage = (score / questions.length) * 100;
+            let starRating = '';
+            
+            if (percentage >= 90) {
+                starRating = '★★★';
+            } else if (percentage >= 70) {
+                starRating = '★★☆';
+            } else if (percentage >= 50) {
+                starRating = '★☆☆';
+            } else {
+                starRating = '☆☆☆';
+            }
+            
+            stars.textContent = starRating;
+            showScreen(resultScreen);
+        }
+
+        // Event listeners
+        document.getElementById('play-btn').addEventListener('click', function() {
+            this.style.animation = 'none';
+            setTimeout(() => {
+                this.style.animation = 'wobble 0.5s';
+            }, 10);
+            showScreen(languageSelection);
+        });
+
+        document.querySelectorAll('.language-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                currentLanguage = lang;
+                showScreen(confirmation);
+            });
+        });
+
+        document.getElementById('yes-btn').addEventListener('click', function() {
+            initGame(currentLanguage);
+        });
+
+        document.getElementById('no-btn').addEventListener('click', function() {
+            showScreen(languageSelection);
+        });
+
+        document.getElementById('submit-btn').addEventListener('click', checkAnswer);
+
+        document.getElementById('answer-input')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        document.getElementById('retry-btn').addEventListener('click', function() {
+            initGame(currentLanguage);
+        });
+
+        document.getElementById('main-menu-btn').addEventListener('click', function() {
+            showScreen(mainMenu);
+        });
+
+        // Modal functionality
+        const aboutBtn = document.getElementById('about-btn');
+        const creditsBtn = document.getElementById('credits-btn');
+        const aboutModal = document.getElementById('about-modal');
+        const creditsModal = document.getElementById('credits-modal');
+        const closeAbout = document.getElementById('close-about');
+        const closeCredits = document.getElementById('close-credits');
+
+        aboutBtn.addEventListener('click', function() {
+            this.style.animation = 'none';
+            setTimeout(() => {
+                this.style.animation = 'wobble 0.5s';
+            }, 10);
+            aboutModal.style.display = 'flex';
+        });
+
+        creditsBtn.addEventListener('click', function() {
+            this.style.animation = 'none';
+            setTimeout(() => {
+                this.style.animation = 'wobble 0.5s';
+            }, 10);
+            creditsModal.style.display = 'flex';
+        });
+
+        closeAbout.addEventListener('click', function() {
+            aboutModal.style.display = 'none';
+        });
+
+        closeCredits.addEventListener('click', function() {
+            creditsModal.style.display = 'none';
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === aboutModal) {
+                aboutModal.style.display = 'none';
+            }
+            if (event.target === creditsModal) {
+                creditsModal.style.display = 'none';
+            }
+        });
+
+        // Initialize the page
+        window.onload = function() {
+            createBubbles();
+        };
+    </script>
+</body>
+</html>
